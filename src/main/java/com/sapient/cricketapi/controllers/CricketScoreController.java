@@ -43,8 +43,14 @@ public class CricketScoreController {
         String newEndPoint = endpoint + "?apikey=" + apikey + "&unique_id=" + uniqueId;
         logger.info("New Endpoint : " + newEndPoint);
 
-        final CricketScore cricketScore = restTemplate.getForObject(
-                newEndPoint, CricketScore.class);
+        CricketScore cricketScore = null;
+        try {
+            cricketScore = restTemplate.getForObject(
+                    newEndPoint, CricketScore.class);
+        } catch (RuntimeException e) {
+            throw new ServiceIsNotAvailableException(String.format("Error:%s<br/>Service is not available for the given uniqueId:%s",
+                    e.getMessage(), uniqueId));
+        }
 
         checkCricketSore(cricketScore);
         logger.info("Cricket Score: " + cricketScore);
